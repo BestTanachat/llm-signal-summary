@@ -11,7 +11,7 @@ services:
         grafana_version: ${GRAFANA_VERSION:-10.3.3}
         development: ${DEVELOPMENT:-false}
     ports:
-      - 3000:3000/tcp
+      - 3001:3000/tcp
     volumes:
       - ./dist:/var/lib/grafana/plugins/grafanalabs-openaianalyser-panel
       - ./provisioning:/etc/grafana/provisioning

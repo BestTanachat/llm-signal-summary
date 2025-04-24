@@ -72,12 +72,18 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     dangerouslyAllowBrowser: true
   });
 
+  const [text, setText] = useState<string>(''); 
   const [buttonText, setButtonText] = useState('Analyse');
   const [buttonEnabled, setButtonEnabled] = useState(true);
   const [analysisText, setAnalysisText] = useState('Please choose an analysis option and click Analyse.');
-  const [narrate, setNarrate] = useState(true);
+  const [narrate, setNarrate] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [prompt, setPrompt] = useState(analysisOptions.Summary);
+
+  // Handle changes to the textarea value
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(event.target.value);
+  };
 
   const handleOptionChange = (event: any) => {
     const selected = event.target.value;
@@ -93,6 +99,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     try {
       setButtonText('Analysing...');
       setButtonEnabled(false);
+      setText('');
 
       // Generate text output
       const canvas = await html2canvas(document.body, { useCORS: true, logging: false });
@@ -104,7 +111,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
           {
             role: 'user',
             content: [
-              { type: 'text', text: prompt },
+              { type: 'text', text: `${prompt} ${text}` },
               {
                 type: 'image_url',
                 image_url: {
@@ -164,9 +171,15 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
         </label>
         <button onClick={onButtonClick} disabled={!buttonEnabled}>{buttonText}</button>
       </div>
+      <textarea 
+          value={text}  
+          onChange={handleChange}  
+          placeholder="Type something..."
+          // disabled={loading} 
+      />
       {analysisText && <ReactMarkdown className={cx(styles.outputText)}>
         {analysisText}
-      </ReactMarkdown>}
+      </ReactMarkdown>}      
     </div>
   );
 };
